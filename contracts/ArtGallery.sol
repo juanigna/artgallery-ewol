@@ -69,7 +69,7 @@ contract ArtGallery is Ownable {
 
 
     /**
-     * @dev Sell an artwork if the artwork have a price
+     * @dev Sell an artwork 
      */
 
     function sellArtWork(uint256 _tokenId, uint256 _tokenPrice) public {
@@ -77,10 +77,26 @@ contract ArtGallery is Ownable {
       nftPrices[_tokenId] = _tokenPrice;
     }
 
-   
-    // Creation of a random number (required for NFT token properties)
-    bytes32 has_randomNum = keccak256(abi.encodePacked(block.timestamp,msg.sender));
+    /**
+     * @dev Buy an artwork if the artwork have a price
+     */
 
+    function buyArtWork(uint256 _tokenId) public payable{
+      uint256 tokenPrice = nftPrices[_tokenId];
+      require(tokenPrice >= 0, "The Art Work is not for sale");
+      require(msg.value == tokenPrice, "Incorrect amount on ether");
+      address seller = artCollection.ownerOf(_tokenId);
+
+      uint256 amountReceived = msg.value;
+      (address royaltyReceiver, uint256 royaltyAmount) = artCollection.royaltyInfo(_tokenId, tokenPrice);
+      uint256 sellerAmount = amountReceived - royaltyAmount;
+
+      payable(seller).transfer(sellerAmount);
+      payable(royaltyReceiver).transfer(royaltyAmount);
+
+      nftPrices[_tokenId] = 0;
+    }
+   
 
     /**
      * @dev Extraction of ethers from the Smart Contract to the Owner
