@@ -1,0 +1,13 @@
+{
+    "name":"Nacho",
+    "description":"Just a guy trying to be a dev",
+    "image": "https://ipfs.io/ipfs/QmWcF5VEvAcTsxTp56pZQEaTdtn1oYcAdi39Yjc6hVkU1z",
+    "attributes":[
+        {
+
+            "trait_type":"Imagination",
+            "value":2,
+            "max_value":10
+        }
+    ]
+}
