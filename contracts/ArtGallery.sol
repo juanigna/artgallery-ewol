@@ -81,6 +81,9 @@ contract ArtGallery is Ownable {
 
     /**
      * @dev Buy an artwork if the artwork have a price
+     * 
+     * If the seller is not the contract, send the sellerAmount
+     *
      */
 
     function buyArtWork(uint256 _tokenId) public payable{
@@ -113,6 +116,11 @@ contract ArtGallery is Ownable {
       emit withdraw(SC_balance, msg.sender);
     }
     
+
+    /**
+     * @dev Check who is the owner of the _tokenId
+     */
+     
     function ownerOfToken(uint256 _tokenId) public view returns(address){
       return artCollection.ownerOf(_tokenId);
     }
