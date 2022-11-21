@@ -13,7 +13,7 @@ contract ArtCollection is  ERC721,ERC721Enumerable, ERC721Royalty, ERC721URIStor
     /**
      * @dev Smart Contract Constructor
      */
-    constructor(string memory _name, string memory _symbol) ERC721(_name, _symbol){}
+    constructor() ERC721("ART GALLERY", "AGNFT"){}
 
     /**
      * @dev Mint to an address

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -41,7 +41,7 @@ contract ArtGallery is Ownable {
      * @dev mapping for the prices of the ArtWorks
      */
 
-    mapping(uint256 => uint256) nftPrices;
+    mapping(uint256 => uint256) public nftPrices;
 
 
     /**
@@ -49,7 +49,7 @@ contract ArtGallery is Ownable {
      */
     
     constructor(){
-      artCollection = new ArtCollection("Art Nft", "AFT");
+      artCollection = new ArtCollection();
     }
 
     /**
