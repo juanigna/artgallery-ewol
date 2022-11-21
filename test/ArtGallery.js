@@ -1,5 +1,6 @@
 const {expect} = require("chai");
 const {ethers} = require("hardhat");
+const { loadFixture } = require("@nomicfoundation/hardhat-network-helpers");
 
 
 let ArtGalleryInstance;
@@ -9,12 +10,13 @@ let ArtCollectionInstance;
 let signers = {};
 
 describe("Art Gallery", function(){
-    describe("Deploy", function(){
-        it("Should deploy the smart contract", async function(){
-            const {deployer, firstUser, secondUser} = await ethers.getSigners();
-            signers.deployer = deployer;
-            signers.firstUser = firstUser;
-            signers.secondUser = secondUser;
+    let deployer, firstUser, secondUser;
+    describe("Deploy", function (){
+        it("Should deploy the smart contract", async function deployContract() {
+
+            [deployer, firstUser, secondUser] = await ethers.getSigners();
+            
+            
 
             ArtCollectionFactory = await ethers.getContractFactory("ArtCollection");
             ArtCollectionInstance = await ArtCollectionFactory.deploy();
@@ -23,6 +25,8 @@ describe("Art Gallery", function(){
             ArtGalleryFactory = await ethers.getContractFactory("ArtGallery", signers.deployer);
             ArtGalleryInstance = await ArtGalleryFactory.deploy();
             await ArtGalleryInstance.deployed();
+
+            return {deployer, firstUser,secondUser};
         })
     })
     
@@ -40,8 +44,14 @@ describe("Art Gallery", function(){
 
     describe("Buy an artwork", function(){
         it("Should allow to buy an artowork", async function(){
-            let firstUserInstance = await ArtGalleryInstance.connect(signers.firstUser);
+            const firstUserInstance = await ArtGalleryInstance.connect(firstUser);
             let buyArtworkTx = await firstUserInstance.buyArtWork(0, { value: ethers.utils.parseEther("5.0")});
+            await buyArtworkTx.wait();
+            //PREGUNTAR A ADRIN PORQUE FALLA
+        })
+
+        it("Should be the owner of the token 0 the firstUser", async function(){
+            expect(await ArtGalleryInstance.ownerOfToken(0)).to.equal(firstUser.address);
         })
     })
 })

@@ -89,6 +89,8 @@ contract ArtGallery is Ownable {
       require(msg.value == tokenPrice, "Incorrect amount on ether");
       address seller = artCollection.ownerOf(_tokenId);
 
+      artCollection.safeTransferFrom(seller, msg.sender, _tokenId);
+
       uint256 amountReceived = msg.value;
       (, uint256 royaltyAmount) = artCollection.royaltyInfo(_tokenId, tokenPrice);
       uint256 sellerAmount = amountReceived - royaltyAmount;
@@ -111,5 +113,7 @@ contract ArtGallery is Ownable {
       emit withdraw(SC_balance, msg.sender);
     }
     
-
+    function ownerOfToken(uint256 _tokenId) public view returns(address){
+      return artCollection.ownerOf(_tokenId);
+    }
 }
