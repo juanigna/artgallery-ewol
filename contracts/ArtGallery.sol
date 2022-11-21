@@ -10,6 +10,8 @@ contract ArtGallery is Ownable {
     // Initial Statements
     // 
 
+    uint256 public constant floor_price = 1 ether;
+
     /**
      * @dev instance of the ArtCollection smart contract
      */
@@ -55,7 +57,7 @@ contract ArtGallery is Ownable {
      */
     function publishArtWork(string memory _tokenUri, uint256 _tokenPrice, address to) public onlyOwner {
       uint256 _tokenId = artCollection.mintTo(_tokenUri, 1000 ,to);
-      nftPrices[_tokenId] = _tokenPrice;
+      nftPrices[_tokenId] = _tokenPrice * floor_price;
     }
 
     /**
@@ -64,7 +66,7 @@ contract ArtGallery is Ownable {
 
     function publishArtWorkToOwner(string memory _tokenUri, uint256 _tokenPrice) public onlyOwner {
       uint256 _tokenId = artCollection.mintOwner(_tokenUri, 1000);
-      nftPrices[_tokenId] = _tokenPrice;
+      nftPrices[_tokenId] = _tokenPrice * floor_price;
     }
 
 
@@ -88,11 +90,12 @@ contract ArtGallery is Ownable {
       address seller = artCollection.ownerOf(_tokenId);
 
       uint256 amountReceived = msg.value;
-      (address royaltyReceiver, uint256 royaltyAmount) = artCollection.royaltyInfo(_tokenId, tokenPrice);
+      (, uint256 royaltyAmount) = artCollection.royaltyInfo(_tokenId, tokenPrice);
       uint256 sellerAmount = amountReceived - royaltyAmount;
-
-      payable(seller).transfer(sellerAmount);
-      payable(royaltyReceiver).transfer(royaltyAmount);
+      
+      if(seller != address(this)){
+        payable(seller).transfer(sellerAmount);
+      }
 
       nftPrices[_tokenId] = 0;
     }
