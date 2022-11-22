@@ -30,11 +30,7 @@ contract ArtGallery is Ownable {
      */
 
     struct Art {
-        string name;
-        uint256 id;
-        uint256 dna;
-        uint8 level;
-        uint8 rarity;
+        uint256 nftPrice;
     }
 
     /**
@@ -42,7 +38,7 @@ contract ArtGallery is Ownable {
      */
 
     mapping(uint256 => uint256) public nftPrices;
-
+    mapping(uint256 => Art) artsGallery;
 
     /**
      * @dev Smart Contract Constructor
@@ -55,9 +51,11 @@ contract ArtGallery is Ownable {
     /**
      * @dev Publish an artwork being an user
      */
+
     function publishArtWork(string memory _tokenUri, uint256 _tokenPrice, address to) public onlyOwner {
       uint256 _tokenId = artCollection.mintTo(_tokenUri, 1000 ,to);
       nftPrices[_tokenId] = _tokenPrice * floor_price;
+      artsGallery[_tokenId] = Art(_tokenPrice);
     }
 
     /**
@@ -67,6 +65,7 @@ contract ArtGallery is Ownable {
     function publishArtWorkToOwner(string memory _tokenUri, uint256 _tokenPrice) public onlyOwner {
       uint256 _tokenId = artCollection.mintOwner(_tokenUri, 1000);
       nftPrices[_tokenId] = _tokenPrice * floor_price;
+      artsGallery[_tokenId] = Art(_tokenPrice);
     }
 
 
@@ -76,7 +75,7 @@ contract ArtGallery is Ownable {
 
     function sellArtWork(uint256 _tokenId, uint256 _tokenPrice) public {
       require(artCollection.ownerOf(_tokenId) == msg.sender, "You are trying to sell something that is not yours");
-      nftPrices[_tokenId] = _tokenPrice;
+      nftPrices[_tokenId] = _tokenPrice * floor_price;
     }
 
     /**
@@ -120,8 +119,16 @@ contract ArtGallery is Ownable {
     /**
      * @dev Check who is the owner of the _tokenId
      */
-     
+
     function ownerOfToken(uint256 _tokenId) public view returns(address){
       return artCollection.ownerOf(_tokenId);
     }
+
+    /**
+     * @dev Check the balance on ethers of an account
+     */
+
+    function balanceOnEthers(address _who) public view returns(uint256){
+		  return _who.balance;		
+	  }
 }
